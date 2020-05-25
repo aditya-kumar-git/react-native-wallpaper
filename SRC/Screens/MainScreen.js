@@ -11,6 +11,7 @@ import {
   StatusBar,
   TouchableOpacity,
   Easing,
+  PanResponder,
 } from "react-native"
 import { connect } from "react-redux"
 import { getDefaultImages } from "../REDUX/Action"
@@ -29,6 +30,7 @@ export class MainScreen extends Component {
       "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wCEAAkGBxISEhUSEhIVFRUVFRUXFxUVFRUVFRUVFRUWFxUVFRUYHSggGBolHRUVITEhJSkrLi4uFx8zODMtNygtLisBCgoKDQ0NDw0NDisZFRkrKystLTctLS0tLS0rLSstNystNzcrKy0rLTctLS0tNy0tLSsrLS0rLTctLS03Ky0rK//AABEIAOEA4QMBIgACEQEDEQH/xAAYAAEBAQEBAAAAAAAAAAAAAAAAAQIDB//EAB0QAQEBAAICAwAAAAAAAAAAAAABERKRQYECIWH/xAAVAQEBAAAAAAAAAAAAAAAAAAAAAf/EABQRAQAAAAAAAAAAAAAAAAAAAAD/2gAMAwEAAhEDEQA/APH9TU0AKgC6WgBoaAaaixQNNQF1UgCiQoKalNBpEiyAsIRaByLUi0F5DKwFlXUNBdGMUGBF1ATTQFEgARUAVFUQoALAABQGYqaCqALIQAUqALCCQFVIUAQBlCiCLhAAWoC6gAGmgAi6oKACoAUhABYQAxSFAqooAagLFxmKBgAOYEQRcKoCAABgBQANCqKUAUgQEABYGICrGcWAqs61ASKmAKrMUBTiA54iiCAACoBCKkAAwBagooiwAEgKCghVSgspAgKuJhoNIrINCSiDWjOqDnUgUCrKyQFIIC0KQALABUwBQFCioCKYAIoAoAsEi2gqasSgKiwGuhkBjUoIBQ0DEXQEioQCVYiwC1UMUU0IgUIVRKACriLQRYEgLiCgFNAI1GZGqACg4lKiABABUAAAAAiwFF1ABSgAgUCLEaA1Yw1KCrqQ0AIoItolBelTiIOS0KAilAQMBUAACUCrqEUWFE0GiIAqEKCiLAFokBqVNRZQWKkAKUkIBoaA5mlMQAhgAAAJAWIChFgYChqAoAKhQBcTVBFABWVBopAAiRoEDBBzoqAioUBQBBaQECkUUNANVFARYgLBIqAqVVA1AFCkAq0AIqQtBrf0TAGEBBKLUAAAWRCAWkKmKNCFBYABQQBqMrKCrKzVoBAAqxJFAUKAGgLoaA5FBBRIUAAAKKJGmVBbEVICgAWmhgGGJFoKJAFgAKCAsLAgKqANehPsByMDUClADRFBAVRFTSgsEIDQIAomAoigYolAWJKSgoigosAFhADAUHFIoBEUQKeFAZICgUAVFAFoAJABasQAWADNPiANNQEFiTyCjTQAAA//2Q==",
     touchTheFullImage: false,
     fullScreenComponentsOpacity: new Animated.Value(0),
+    moveTheFullScreenImage: new Animated.ValueXY(0),
   }
 
   componentDidMount() {
@@ -38,8 +40,8 @@ export class MainScreen extends Component {
       this.props.getDefaultImages()
     }
   }
+  // ! GO TO FULLSCREEN ANIMATION
   AnimatingToFullScreen = (x, y, width, height, fx, fy, urlSmall, urlBig) => {
-    // console.log(`X is ${fx} Y is ${width}`)
     this.setState({
       fullURL: urlSmall,
       hideStatusBar: true,
@@ -81,6 +83,57 @@ export class MainScreen extends Component {
     })
   }
 
+  //!COME BACK FROM FULLSCREEN
+
+  comeBack = () => {
+    this.setState({
+      hideStatusBar: false,
+    })
+    this.state.fullScreenComponentsOpacity.setValue(0)
+    Animated.parallel([
+      Animated.timing(this.state.summonHeight, {
+        toValue: this.props.storeImageInfo.height,
+        duration: 200,
+        easing: Easing.elastic(0.8),
+      }),
+      Animated.timing(this.state.summonWidth, {
+        toValue: this.props.storeImageInfo.width,
+        duration: 200,
+        easing: Easing.elastic(0.8),
+      }),
+      Animated.timing(this.state.summonCoordinates.x, {
+        toValue: this.props.storeImageInfo.fx,
+        duration: 200,
+        easing: Easing.elastic(0.8),
+      }),
+      Animated.timing(this.state.summonCoordinates.y, {
+        toValue: this.props.storeImageInfo.fy,
+        duration: 200,
+        easing: Easing.elastic(0.8),
+      }),
+      Animated.timing(this.state.moveTheFullScreenImage.x, {
+        toValue: 0,
+        duration: 200,
+        easing: Easing.elastic(0.8),
+      }),
+      Animated.timing(this.state.moveTheFullScreenImage.y, {
+        toValue: 0,
+        duration: 200,
+        easing: Easing.elastic(0.8),
+      }),
+    ]).start(() => {
+      this.state.summonHeight.setValue(0)
+      this.state.summonWidth.setValue(0)
+
+      this.setState({
+        touchTheFullImage: false,
+        fullURL:
+          "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wCEAAkGBxISEhUSEhIVFRUVFRUXFxUVFRUVFRUVFRUWFxUVFRUYHSggGBolHRUVITEhJSkrLi4uFx8zODMtNygtLisBCgoKDQ0NDw0NDisZFRkrKystLTctLS0tLS0rLSstNystNzcrKy0rLTctLS0tNy0tLSsrLS0rLTctLS03Ky0rK//AABEIAOEA4QMBIgACEQEDEQH/xAAYAAEBAQEBAAAAAAAAAAAAAAAAAQIDB//EAB0QAQEBAAICAwAAAAAAAAAAAAABERKRQYECIWH/xAAVAQEBAAAAAAAAAAAAAAAAAAAAAf/EABQRAQAAAAAAAAAAAAAAAAAAAAD/2gAMAwEAAhEDEQA/APH9TU0AKgC6WgBoaAaaixQNNQF1UgCiQoKalNBpEiyAsIRaByLUi0F5DKwFlXUNBdGMUGBF1ATTQFEgARUAVFUQoALAABQGYqaCqALIQAUqALCCQFVIUAQBlCiCLhAAWoC6gAGmgAi6oKACoAUhABYQAxSFAqooAagLFxmKBgAOYEQRcKoCAABgBQANCqKUAUgQEABYGICrGcWAqs61ASKmAKrMUBTiA54iiCAACoBCKkAAwBagooiwAEgKCghVSgspAgKuJhoNIrINCSiDWjOqDnUgUCrKyQFIIC0KQALABUwBQFCioCKYAIoAoAsEi2gqasSgKiwGuhkBjUoIBQ0DEXQEioQCVYiwC1UMUU0IgUIVRKACriLQRYEgLiCgFNAI1GZGqACg4lKiABABUAAAAAiwFF1ABSgAgUCLEaA1Yw1KCrqQ0AIoItolBelTiIOS0KAilAQMBUAACUCrqEUWFE0GiIAqEKCiLAFokBqVNRZQWKkAKUkIBoaA5mlMQAhgAAAJAWIChFgYChqAoAKhQBcTVBFABWVBopAAiRoEDBBzoqAioUBQBBaQECkUUNANVFARYgLBIqAqVVA1AFCkAq0AIqQtBrf0TAGEBBKLUAAAWRCAWkKmKNCFBYABQQBqMrKCrKzVoBAAqxJFAUKAGgLoaA5FBBRIUAAAKKJGmVBbEVICgAWmhgGGJFoKJAFgAKCAsLAgKqANehPsByMDUClADRFBAVRFTSgsEIDQIAomAoigYolAWJKSgoigosAFhADAUHFIoBEUQKeFAZICgUAVFAFoAJABasQAWADNPiANNQEFiTyCjTQAAA//2Q==",
+      })
+    })
+  }
+
+  // !GET IMAGES FROM API
   rendeerTHIS = () => {
     if (this.props.storeDefaultImages[0]) {
       return (
@@ -105,26 +158,62 @@ export class MainScreen extends Component {
     } else {
       return (
         <View>
-          <Text style={{ color: "white" }}>NOOOOOOO</Text>
+          <Text style={{ color: "white" }}></Text>
         </View>
       )
     }
   }
-
+  //!RENDER
   render() {
+    //!PANRESPONDER
+    var _panRES = PanResponder.create({
+      onStartShouldSetPanResponder: () => {
+        return true
+      },
+      onPanResponderMove: Animated.event([
+        null,
+        {
+          dx: this.state.moveTheFullScreenImage.x,
+          dy: this.state.moveTheFullScreenImage.y,
+        },
+      ]),
+      onPanResponderRelease: (x, y) => {
+        if (y.dy > 100 || y.dy < -100) {
+          this.comeBack()
+        } else {
+          Animated.parallel([
+            Animated.spring(this.state.moveTheFullScreenImage.x, {
+              toValue: 0,
+            }),
+            Animated.spring(this.state.moveTheFullScreenImage.y, {
+              toValue: 0,
+            }),
+          ]).start()
+        }
+      },
+    })
+    //! INTERPOLATE MOVEMENT
+    var moveThisMuch = this.state.moveTheFullScreenImage.y.interpolate({
+      inputRange: [-100, 100],
+      outputRange: [-20, 20],
+    })
+
+    //!RETURN
     return (
       <View style={mainStyle.container}>
         <StatusBar hidden={this.state.hideStatusBar} />
+        {/* FULL SCREEN IMAGE */}
         <Animated.View
           style={{
-            // backgroundColor: "rgba(140,24,239,0.5)",
             position: "absolute",
             zIndex: 1,
             height: this.state.summonHeight,
             width: this.state.summonWidth,
             top: this.state.summonCoordinates.y,
             left: this.state.summonCoordinates.x,
+            transform: [{ translateY: moveThisMuch }],
           }}
+          {..._panRES.panHandlers}
           pointerEvents={
             this.state.touchTheFullImage === false ? "none" : "auto"
           }
@@ -136,56 +225,44 @@ export class MainScreen extends Component {
             }}
           >
             <Animated.View
-              style={{ opacity: this.state.fullScreenComponentsOpacity }}
+              style={{
+                opacity: this.state.fullScreenComponentsOpacity,
+                position: "relative",
+                flex: 1,
+              }}
             >
-              <TouchableOpacity
-                onPress={() => {
-                  console.log(
-                    this.props.storeImageInfo.fy,
-                    this.props.storeImageInfo.fx
-                  )
-                  this.setState({
-                    hideStatusBar: false,
-                  })
-                  this.state.fullScreenComponentsOpacity.setValue(0)
-                  Animated.parallel([
-                    Animated.timing(this.state.summonHeight, {
-                      toValue: this.props.storeImageInfo.height,
-                      duration: 200,
-                    }),
-                    Animated.timing(this.state.summonWidth, {
-                      toValue: this.props.storeImageInfo.width,
-                      duration: 200,
-                    }),
-                    Animated.timing(this.state.summonCoordinates.x, {
-                      toValue: this.props.storeImageInfo.fx,
-                      duration: 200,
-                    }),
-                    Animated.timing(this.state.summonCoordinates.y, {
-                      toValue: this.props.storeImageInfo.fy,
-                      duration: 200,
-                    }),
-                  ]).start(() => {
-                    this.state.summonHeight.setValue(0)
-                    this.state.summonWidth.setValue(0)
-
-                    this.setState({
-                      touchTheFullImage: false,
-                      fullURL:
-                        "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wCEAAkGBxISEhUSEhIVFRUVFRUXFxUVFRUVFRUVFRUWFxUVFRUYHSggGBolHRUVITEhJSkrLi4uFx8zODMtNygtLisBCgoKDQ0NDw0NDisZFRkrKystLTctLS0tLS0rLSstNystNzcrKy0rLTctLS0tNy0tLSsrLS0rLTctLS03Ky0rK//AABEIAOEA4QMBIgACEQEDEQH/xAAYAAEBAQEBAAAAAAAAAAAAAAAAAQIDB//EAB0QAQEBAAICAwAAAAAAAAAAAAABERKRQYECIWH/xAAVAQEBAAAAAAAAAAAAAAAAAAAAAf/EABQRAQAAAAAAAAAAAAAAAAAAAAD/2gAMAwEAAhEDEQA/APH9TU0AKgC6WgBoaAaaixQNNQF1UgCiQoKalNBpEiyAsIRaByLUi0F5DKwFlXUNBdGMUGBF1ATTQFEgARUAVFUQoALAABQGYqaCqALIQAUqALCCQFVIUAQBlCiCLhAAWoC6gAGmgAi6oKACoAUhABYQAxSFAqooAagLFxmKBgAOYEQRcKoCAABgBQANCqKUAUgQEABYGICrGcWAqs61ASKmAKrMUBTiA54iiCAACoBCKkAAwBagooiwAEgKCghVSgspAgKuJhoNIrINCSiDWjOqDnUgUCrKyQFIIC0KQALABUwBQFCioCKYAIoAoAsEi2gqasSgKiwGuhkBjUoIBQ0DEXQEioQCVYiwC1UMUU0IgUIVRKACriLQRYEgLiCgFNAI1GZGqACg4lKiABABUAAAAAiwFF1ABSgAgUCLEaA1Yw1KCrqQ0AIoItolBelTiIOS0KAilAQMBUAACUCrqEUWFE0GiIAqEKCiLAFokBqVNRZQWKkAKUkIBoaA5mlMQAhgAAAJAWIChFgYChqAoAKhQBcTVBFABWVBopAAiRoEDBBzoqAioUBQBBaQECkUUNANVFARYgLBIqAqVVA1AFCkAq0AIqQtBrf0TAGEBBKLUAAAWRCAWkKmKNCFBYABQQBqMrKCrKzVoBAAqxJFAUKAGgLoaA5FBBRIUAAAKKJGmVBbEVICgAWmhgGGJFoKJAFgAKCAsLAgKqANehPsByMDUClADRFBAVRFTSgsEIDQIAomAoigYolAWJKSgoigosAFhADAUHFIoBEUQKeFAZICgUAVFAFoAJABasQAWADNPiANNQEFiTyCjTQAAA//2Q==",
-                    })
-                  })
-                }}
-              >
+              <TouchableOpacity onPress={this.comeBack}>
                 <AntDesign
                   name="closecircle"
-                  style={{ fontSize: 30, color: "white", margin: 10 }}
+                  style={{
+                    fontSize: 30,
+                    color: "white",
+                    margin: 10,
+                    shadowColor: "black",
+                    shadowOpacity: 0.5,
+                    shadowOffset: { height: 1 },
+                  }}
                 />
               </TouchableOpacity>
             </Animated.View>
           </ImageBackground>
         </Animated.View>
-        <SafeAreaView style={{ flex: 1 }}>{this.rendeerTHIS()}</SafeAreaView>
+        <SafeAreaView style={{ flex: 1 }}>
+          <View style={{ marginVertical: 10 }}>
+            <Text
+              style={{
+                color: "white",
+                fontWeight: "bold",
+                fontSize: 40,
+                textTransform: "uppercase",
+              }}
+            >
+              wallpapers
+            </Text>
+          </View>
+          {/* IMAGES  */}
+          <View style={{ flex: 1 }}>{this.rendeerTHIS()}</View>
+        </SafeAreaView>
       </View>
     )
   }

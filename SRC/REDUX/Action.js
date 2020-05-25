@@ -10,7 +10,6 @@ export var getDefaultImages = () => {
       },
     })
     try {
-      console.log(output.data)
       dispatch({
         type: "DEFAULT",
         payload: output.data,
