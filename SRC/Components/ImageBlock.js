@@ -6,6 +6,8 @@ import {
   ImageBackground,
   TouchableOpacity,
 } from "react-native"
+import { connect } from "react-redux"
+import { getImageInfo } from "../REDUX/Action"
 
 export class ImageBlock extends Component {
   constructor(props) {
@@ -27,6 +29,16 @@ export class ImageBlock extends Component {
         onPress={() => {
           this._blockREF.current.measure((x, y, width, height, fx, fy) => {
             renderHere(x, y, width, height, fx, fy, urls.small, urls.full)
+            this.props.getImageInfo(
+              x,
+              y,
+              width,
+              height,
+              fx,
+              fy,
+              urls.small,
+              urls.full
+            )
           })
         }}
       >
@@ -43,4 +55,10 @@ export class ImageBlock extends Component {
   }
 }
 
-export default ImageBlock
+const mapStateToProps = (state) => {
+  return state
+}
+
+const mapDispatchToProps = { getImageInfo: getImageInfo }
+
+export default connect(mapStateToProps, mapDispatchToProps)(ImageBlock)

@@ -10,6 +10,7 @@ import {
   ImageBackground,
   StatusBar,
   TouchableOpacity,
+  Easing,
 } from "react-native"
 import { connect } from "react-redux"
 import { getDefaultImages } from "../REDUX/Action"
@@ -48,14 +49,26 @@ export class MainScreen extends Component {
     this.state.summonCoordinates.x.setValue(fx)
     this.state.summonCoordinates.y.setValue(fy)
     Animated.parallel([
-      Animated.spring(this.state.summonHeight, {
+      Animated.timing(this.state.summonHeight, {
         toValue: this.state.actualHeight,
+        duration: 300,
+        easing: Easing.elastic(0.8),
       }),
-      Animated.spring(this.state.summonWidth, {
+      Animated.timing(this.state.summonWidth, {
         toValue: this.state.actualWidth,
+        duration: 300,
+        easing: Easing.elastic(0.8),
       }),
-      Animated.spring(this.state.summonCoordinates.x, { toValue: 0 }),
-      Animated.spring(this.state.summonCoordinates.y, { toValue: 0 }),
+      Animated.timing(this.state.summonCoordinates.x, {
+        toValue: 0,
+        duration: 300,
+        easing: Easing.elastic(0.8),
+      }),
+      Animated.timing(this.state.summonCoordinates.y, {
+        toValue: 0,
+        duration: 300,
+        easing: Easing.elastic(0.8),
+      }),
     ]).start(() => {
       this.setState({
         fullURL: urlBig,
@@ -63,7 +76,7 @@ export class MainScreen extends Component {
       })
       Animated.timing(this.state.fullScreenComponentsOpacity, {
         toValue: 1,
-        duration: 1000,
+        duration: 100,
       }).start()
     })
   }
@@ -125,7 +138,45 @@ export class MainScreen extends Component {
             <Animated.View
               style={{ opacity: this.state.fullScreenComponentsOpacity }}
             >
-              <TouchableOpacity>
+              <TouchableOpacity
+                onPress={() => {
+                  console.log(
+                    this.props.storeImageInfo.fy,
+                    this.props.storeImageInfo.fx
+                  )
+                  this.setState({
+                    hideStatusBar: false,
+                  })
+                  this.state.fullScreenComponentsOpacity.setValue(0)
+                  Animated.parallel([
+                    Animated.timing(this.state.summonHeight, {
+                      toValue: this.props.storeImageInfo.height,
+                      duration: 200,
+                    }),
+                    Animated.timing(this.state.summonWidth, {
+                      toValue: this.props.storeImageInfo.width,
+                      duration: 200,
+                    }),
+                    Animated.timing(this.state.summonCoordinates.x, {
+                      toValue: this.props.storeImageInfo.fx,
+                      duration: 200,
+                    }),
+                    Animated.timing(this.state.summonCoordinates.y, {
+                      toValue: this.props.storeImageInfo.fy,
+                      duration: 200,
+                    }),
+                  ]).start(() => {
+                    this.state.summonHeight.setValue(0)
+                    this.state.summonWidth.setValue(0)
+
+                    this.setState({
+                      touchTheFullImage: false,
+                      fullURL:
+                        "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wCEAAkGBxISEhUSEhIVFRUVFRUXFxUVFRUVFRUVFRUWFxUVFRUYHSggGBolHRUVITEhJSkrLi4uFx8zODMtNygtLisBCgoKDQ0NDw0NDisZFRkrKystLTctLS0tLS0rLSstNystNzcrKy0rLTctLS0tNy0tLSsrLS0rLTctLS03Ky0rK//AABEIAOEA4QMBIgACEQEDEQH/xAAYAAEBAQEBAAAAAAAAAAAAAAAAAQIDB//EAB0QAQEBAAICAwAAAAAAAAAAAAABERKRQYECIWH/xAAVAQEBAAAAAAAAAAAAAAAAAAAAAf/EABQRAQAAAAAAAAAAAAAAAAAAAAD/2gAMAwEAAhEDEQA/APH9TU0AKgC6WgBoaAaaixQNNQF1UgCiQoKalNBpEiyAsIRaByLUi0F5DKwFlXUNBdGMUGBF1ATTQFEgARUAVFUQoALAABQGYqaCqALIQAUqALCCQFVIUAQBlCiCLhAAWoC6gAGmgAi6oKACoAUhABYQAxSFAqooAagLFxmKBgAOYEQRcKoCAABgBQANCqKUAUgQEABYGICrGcWAqs61ASKmAKrMUBTiA54iiCAACoBCKkAAwBagooiwAEgKCghVSgspAgKuJhoNIrINCSiDWjOqDnUgUCrKyQFIIC0KQALABUwBQFCioCKYAIoAoAsEi2gqasSgKiwGuhkBjUoIBQ0DEXQEioQCVYiwC1UMUU0IgUIVRKACriLQRYEgLiCgFNAI1GZGqACg4lKiABABUAAAAAiwFF1ABSgAgUCLEaA1Yw1KCrqQ0AIoItolBelTiIOS0KAilAQMBUAACUCrqEUWFE0GiIAqEKCiLAFokBqVNRZQWKkAKUkIBoaA5mlMQAhgAAAJAWIChFgYChqAoAKhQBcTVBFABWVBopAAiRoEDBBzoqAioUBQBBaQECkUUNANVFARYgLBIqAqVVA1AFCkAq0AIqQtBrf0TAGEBBKLUAAAWRCAWkKmKNCFBYABQQBqMrKCrKzVoBAAqxJFAUKAGgLoaA5FBBRIUAAAKKJGmVBbEVICgAWmhgGGJFoKJAFgAKCAsLAgKqANehPsByMDUClADRFBAVRFTSgsEIDQIAomAoigYolAWJKSgoigosAFhADAUHFIoBEUQKeFAZICgUAVFAFoAJABasQAWADNPiANNQEFiTyCjTQAAA//2Q==",
+                    })
+                  })
+                }}
+              >
                 <AntDesign
                   name="closecircle"
                   style={{ fontSize: 30, color: "white", margin: 10 }}

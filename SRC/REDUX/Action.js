@@ -20,3 +20,10 @@ export var getDefaultImages = () => {
     }
   }
 }
+
+export var getImageInfo = (x, y, width, height, fx, fy, urlSmall, urlFull) => {
+  return {
+    type: "INFO",
+    payload: { x, y, width, height, fx, fy, urlSmall, urlFull },
+  }
+}
