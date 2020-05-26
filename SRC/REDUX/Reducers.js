@@ -4,7 +4,8 @@ var storeDefaultImages = (initstate = [], action) => {
   switch (action.type) {
     case "DEFAULT":
       return action.payload
-
+    case "SEARCHRESULT":
+      return action.payload
     default:
       return initstate
   }
@@ -20,9 +21,19 @@ var storeImageInfo = (initstate = {}, action) => {
   }
 }
 
+var textEdit = (initstate = "", action) => {
+  switch (action.type) {
+    case "EDIT":
+      return action.payload
+    default:
+      return initstate
+  }
+}
+
 var allReducers = combineReducers({
   storeDefaultImages: storeDefaultImages,
   storeImageInfo: storeImageInfo,
+  textEdit: textEdit,
 })
 
 export default allReducers

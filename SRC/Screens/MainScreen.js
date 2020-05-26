@@ -12,11 +12,13 @@ import {
   TouchableOpacity,
   Easing,
   PanResponder,
+  TextInput,
+  Keyboard,
 } from "react-native"
 import { connect } from "react-redux"
-import { getDefaultImages } from "../REDUX/Action"
+import { getDefaultImages, getEditText, getSearchImages } from "../REDUX/Action"
 import ImageBlock from "../Components/ImageBlock"
-import { AntDesign } from "@expo/vector-icons"
+import { AntDesign, FontAwesome } from "@expo/vector-icons"
 
 export class MainScreen extends Component {
   state = {
@@ -247,19 +249,68 @@ export class MainScreen extends Component {
             </Animated.View>
           </ImageBackground>
         </Animated.View>
-        <SafeAreaView style={{ flex: 1 }}>
-          <View style={{ marginVertical: 10 }}>
-            <Text
+        <SafeAreaView style={{ flex: 1, alignItems: "center" }}>
+          <Text
+            style={{
+              color: "white",
+              fontWeight: "bold",
+              fontSize: 40,
+              textTransform: "uppercase",
+              marginVertical: 10,
+            }}
+          >
+            wallpapers
+          </Text>
+          {/* SEARCHBAR */}
+          <View
+            style={{
+              flexDirection: "row",
+            }}
+          >
+            <TextInput
               style={{
-                color: "white",
-                fontWeight: "bold",
-                fontSize: 40,
-                textTransform: "uppercase",
+                height: 30,
+                width: 250,
+                backgroundColor: "white",
+                borderRadius: 20,
+                textAlign: "center",
+                marginBottom: 10,
+                transform: [{ translateX: 15 }],
+              }}
+              placeholder="SEARCH"
+              onChangeText={(x) => {
+                this.props.getEditText(x)
+              }}
+              value={this.props.textEdit}
+              onSubmitEditing={(x) => {
+                if (x.nativeEvent.text !== "") {
+                  this.props.getSearchImages(x.nativeEvent.text)
+                  this.props.getEditText("")
+                }
+              }}
+            />
+            <TouchableOpacity
+              style={{
+                backgroundColor: "white",
+                height: 30,
+                width: 30,
+                transform: [{ translateX: 30 }],
+                borderRadius: 30,
+                justifyContent: "center",
+                alignItems: "center",
+              }}
+              onPress={() => {
+                if (this.props.textEdit !== "") {
+                  this.props.getSearchImages(this.props.textEdit)
+                  this.props.getEditText("")
+                  Keyboard.dismiss()
+                }
               }}
             >
-              wallpapers
-            </Text>
+              <FontAwesome name="search" size={18} color="rgb(17,20,42)" />
+            </TouchableOpacity>
           </View>
+
           {/* IMAGES  */}
           <View style={{ flex: 1 }}>{this.rendeerTHIS()}</View>
         </SafeAreaView>
@@ -277,6 +328,10 @@ const mainStyle = StyleSheet.create({
     backgroundColor: "rgb(17,20,42)",
   },
 })
-const mapDispatchToProps = { getDefaultImages: getDefaultImages }
+const mapDispatchToProps = {
+  getDefaultImages: getDefaultImages,
+  getEditText: getEditText,
+  getSearchImages: getSearchImages,
+}
 
 export default connect(mapStateToProps, mapDispatchToProps)(MainScreen)

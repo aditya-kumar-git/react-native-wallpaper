@@ -19,10 +19,37 @@ export var getDefaultImages = () => {
     }
   }
 }
+export var getSearchImages = (searchThis) => {
+  return async (dispatch) => {
+    var output = await Axios({
+      url: "https://api.unsplash.com/search/photos",
+      params: {
+        client_id: "B-8bCs5hXK3e3nTBkQ-IYMh21m8yOvUj76V54ZeoTUU",
+        query: searchThis,
+        per_page: 30,
+      },
+    })
+    try {
+      dispatch({
+        type: "SEARCHRESULT",
+        payload: output.data.results,
+      })
+    } catch (error) {
+      console.log(error)
+    }
+  }
+}
 
 export var getImageInfo = (x, y, width, height, fx, fy, urlSmall, urlFull) => {
   return {
     type: "INFO",
     payload: { x, y, width, height, fx, fy, urlSmall, urlFull },
+  }
+}
+
+export var getEditText = (text) => {
+  return {
+    type: "EDIT",
+    payload: text,
   }
 }
