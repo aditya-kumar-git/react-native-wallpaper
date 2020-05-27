@@ -159,8 +159,12 @@ export class MainScreen extends Component {
       )
     } else {
       return (
-        <View>
-          <Text style={{ color: "white" }}></Text>
+        <View
+          style={{ flex: 1, alignItems: "center", justifyContent: "center" }}
+        >
+          <Text style={{ color: "white", fontWeight: "bold", fontSize: 40 }}>
+            Loading...
+          </Text>
         </View>
       )
     }
