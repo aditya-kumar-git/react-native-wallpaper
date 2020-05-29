@@ -19,6 +19,7 @@ import { connect } from "react-redux"
 import { getDefaultImages, getEditText, getSearchImages } from "../REDUX/Action"
 import ImageBlock from "../Components/ImageBlock"
 import { AntDesign, FontAwesome } from "@expo/vector-icons"
+import FloatingButton from "../Components/FloatingButton"
 
 export class MainScreen extends Component {
   state = {
@@ -318,6 +319,7 @@ export class MainScreen extends Component {
           {/* IMAGES  */}
           <View style={{ flex: 1 }}>{this.rendeerTHIS()}</View>
         </SafeAreaView>
+        <FloatingButton />
       </View>
     )
   }
