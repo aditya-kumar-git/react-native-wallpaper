@@ -5,7 +5,7 @@ export var getDefaultImages = () => {
     var output = await Axios({
       url: "https://api.unsplash.com/photos/random",
       params: {
-        client_id: "B-8bCs5hXK3e3nTBkQ-IYMh21m8yOvUj76V54ZeoTUU",
+        client_id: "",
         count: 30,
       },
     })
@@ -24,7 +24,7 @@ export var getSearchImages = (searchThis) => {
     var output = await Axios({
       url: "https://api.unsplash.com/search/photos",
       params: {
-        client_id: "B-8bCs5hXK3e3nTBkQ-IYMh21m8yOvUj76V54ZeoTUU",
+        client_id: "",
         query: searchThis,
         per_page: 30,
       },
