@@ -1,28 +1,27 @@
 {
   "expo": {
-    "name": "galleryviewer",
-    "slug": "galleryviewer",
-    "platforms": [
-      "ios",
-      "android",
-      "web"
-    ],
+    "name": "Wallpaper",
+    "slug": "wallpaper",
+    "platforms": ["ios", "android", "web"],
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "splash": {
       "image": "./assets/splash.png",
       "resizeMode": "contain",
-      "backgroundColor": "#ffffff"
+      "backgroundColor": "#58C37C"
     },
     "updates": {
       "fallbackToCacheTimeout": 0
     },
-    "assetBundlePatterns": [
-      "**/*"
-    ],
+    "assetBundlePatterns": ["**/*"],
     "ios": {
       "supportsTablet": true
+    },
+    "android": {
+      "package": "com.elektrogames.wallpaper",
+      "versionCode": 1,
+      "permissions": []
     }
   }
 }
